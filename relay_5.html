@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="relay">
+<meta name="theme-color" content="#EDEEE5">
+<title>relay</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #EDEEE5;
+    --card: #FFFFFF;
+    --ink: #1B1D16;
+    --ink-soft: #5B5D52;
+    --ink-faint: #9A9C8E;
+    --line: #DAD9CD;
+    --teal: #0E6E55;
+    --teal-soft: #E1F0EA;
+    --coral: #C85A34;
+    --coral-soft: #F7E7E0;
+  }
+
+  html[data-theme="dark"] {
+    --paper: #15160F;
+    --card: #1F2118;
+    --ink: #EDEEE5;
+    --ink-soft: #A6A896;
+    --ink-faint: #6D6F60;
+    --line: #34362B;
+    --teal: #35C99A;
+    --teal-soft: #1B3A2E;
+    --coral: #E08258;
+    --coral-soft: #3D2A1E;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    background: var(--ink);
+    overscroll-behavior: none;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    min-height: 100dvh;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  .phone {
+    width: 100%;
+    max-width: 400px;
+    min-height: 100vh;
+    min-height: 100dvh;
+    background: var(--paper);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 500px) {
+    .phone {
+      min-height: 844px;
+      height: 844px;
+      border-radius: 40px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+      border: 8px solid #0a0a0a;
+    }
+  }
+
+  .topbar {
+    padding: 20px 24px 0;
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .wordmark {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 20px;
+    letter-spacing: -0.02em;
+  }
+
+  .wordmark::after {
+    content: '_';
+    color: var(--teal);
+    animation: blink 1.1s step-end infinite;
+  }
+
+  @keyframes blink { 50% { opacity: 0; } }
+
+  .topbar-right {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 20px 24px 24px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 20px;
+  }
+
+  .card-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+
+  .live-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: inline-block;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+
+  .number {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+    font-size: 34px;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+  }
+
+  .location {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-top: 6px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  button {
+    font-family: 'Inter', sans-serif;
+    border: none;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    color: var(--ink);
+    touch-action: manipulation;
+    user-select: none;
+  }
+
+  .btn {
+    width: 100%;
+    height: 52px;
+    border-radius: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: transform 0.08s ease;
+  }
+
+  .btn:active { transform: scale(0.98); }
+
+  .btn-primary {
+    background: var(--ink);
+    color: var(--paper);
+  }
+
+  .btn-secondary {
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--ink);
+  }
+
+  .btn:disabled {
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--ink-faint);
+    cursor: not-allowed;
+  }
+
+  .btn:disabled:active { transform: none; }
+
+  .btn-danger {
+    background: var(--coral-soft);
+    color: var(--coral);
+  }
+
+  .limit-note {
+    font-size: 12px;
+    color: var(--coral);
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-faint);
+    margin-bottom: 14px;
+  }
+
+  .timeline {
+    position: relative;
+    padding-left: 20px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 6px;
+    bottom: 6px;
+    width: 1px;
+    background: var(--line);
+  }
+
+  .t-row {
+    position: relative;
+    padding-bottom: 18px;
+  }
+
+  .t-row:last-child { padding-bottom: 0; }
+
+  .t-dot {
+    position: absolute;
+    left: -20px;
+    top: 4px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--ink-faint);
+    border: 2px solid var(--paper);
+  }
+
+  .t-row.active .t-dot {
+    background: var(--teal);
+  }
+
+  .t-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .t-meta {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+  }
+
+  .t-time {
+    font-size: 11px;
+    color: var(--ink-faint);
+    position: absolute;
+    right: 0;
+    top: 4px;
+  }
+
+  /* List rows shared across messages / calls / settings */
+  .row {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+  }
+
+  .row:active { transform: scale(0.98); }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--teal-soft);
+    color: var(--teal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .row-main { flex: 1; min-width: 0; }
+
+  .row-name {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .row-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-top: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .row-meta {
+    font-size: 11px;
+    color: var(--ink-faint);
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .unread-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--teal);
+    display: inline-block;
+    margin-top: 4px;
+  }
+
+  .call-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .call-icon.out { background: var(--teal-soft); color: var(--teal); }
+  .call-icon.in { background: var(--teal-soft); color: var(--teal); }
+  .call-icon.missed { background: var(--coral-soft); color: var(--coral); }
+
+  .row-name.missed { color: var(--coral); }
+
+  /* Settings */
+  .settings-row {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .settings-label { font-size: 14px; font-weight: 500; }
+  .settings-desc { font-size: 12px; color: var(--ink-faint); margin-top: 2px; }
+
+  .switch-wrap {
+    position: relative;
+    width: 44px;
+    height: 26px;
+    flex-shrink: 0;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .switch-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    margin: 0;
+    cursor: pointer;
+    z-index: 1;
+  }
+
+  .switch-track {
+    position: absolute;
+    inset: 0;
+    border-radius: 13px;
+    background: var(--line);
+    transition: background 0.15s ease;
+    pointer-events: none;
+  }
+
+  .switch-thumb {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--card);
+    transition: transform 0.15s ease;
+    pointer-events: none;
+  }
+
+  .switch-input:checked + .switch-track {
+    background: var(--teal);
+  }
+
+  .switch-input:checked + .switch-track + .switch-thumb {
+    transform: translateX(18px);
+  }
+
+  .stepper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+
+  .stepper button {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .stepper-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    min-width: 26px;
+    text-align: center;
+  }
+
+  /* Overlays (picker + thread) */
+  .overlay {
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.22s ease;
+    z-index: 5;
+  }
+
+  .overlay.open { transform: translateX(0); }
+
+  .overlay-top {
+    padding: 20px 24px 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .overlay-title {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .overlay-sub {
+    font-size: 12px;
+    color: var(--ink-faint);
+  }
+
+  .icon-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .search-input, .text-input {
+    flex: 1;
+    height: 44px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--card);
+    padding: 0 14px;
+    font-size: 16px;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    outline: none;
+  }
+
+  .search-input:focus, .text-input:focus {
+    border-color: var(--teal);
+  }
+
+  .results, .thread-body {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    padding: 4px 24px 24px;
+  }
+
+  .result-row {
+    width: 100%;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+  .result-row:active { transform: scale(0.98); }
+
+  .result-city { font-size: 14px; font-weight: 500; }
+  .result-state { font-size: 12px; color: var(--ink-faint); }
+  .result-ac {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--ink-soft);
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 14px;
+    padding: 40px 20px;
+  }
+
+  /* Message bubbles */
+  .bubble-row {
+    display: flex;
+    margin-bottom: 10px;
+  }
+
+  .bubble-row.mine { justify-content: flex-end; }
+
+  .bubble {
+    max-width: 75%;
+    padding: 10px 13px;
+    border-radius: 16px;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .bubble-row.mine .bubble {
+    background: var(--teal);
+    color: #fff;
+    border-bottom-right-radius: 4px;
+  }
+
+  .bubble-row.theirs .bubble {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-bottom-left-radius: 4px;
+  }
+
+  .thread-input-bar {
+    display: flex;
+    gap: 8px;
+    padding: 12px 24px;
+    border-top: 1px solid var(--line);
+    flex-shrink: 0;
+  }
+
+  .send-btn {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: var(--ink);
+    color: var(--paper);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .send-btn:disabled {
+    background: var(--card);
+    border: 1px solid var(--line);
+    color: var(--ink-faint);
+  }
+
+  /* Tab bar */
+  .tabbar {
+    display: flex;
+    border-top: 1px solid var(--line);
+    background: var(--card);
+    flex-shrink: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .tab {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 4px 8px;
+    background: transparent;
+    color: var(--ink-faint);
+  }
+
+  .tab.active { color: var(--teal); }
+
+  .tab-label {
+    font-size: 10px;
+    font-weight: 500;
+  }
+
+  svg { display: block; }
+</style>
+</head>
+<body>
+
+<div class="phone" id="phone">
+
+  <div class="topbar">
+    <div class="wordmark">relay</div>
+    <div class="topbar-right" id="topbar-right">5 swaps left today</div>
+  </div>
+
+  <!-- HOME -->
+  <div class="content" id="tab-home">
+    <div class="card">
+      <div class="card-label"><span class="live-dot"></span>Active number</div>
+      <div class="number" id="current-number">(612) 555-0148</div>
+      <div class="location" id="current-city">Minneapolis, MN</div>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" id="swap-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M8 16H3v5"/></svg>
+        New number, same area
+      </button>
+      <button class="btn btn-secondary" id="open-picker-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.5-7-11.5a7 7 0 0 1 14 0C19 14.5 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.3"/></svg>
+        Choose area code or city
+      </button>
+      <p class="limit-note" id="limit-note" style="display:none;">Daily limit reached — resets at midnight</p>
+    </div>
+
+    <div class="section-title">Number history</div>
+    <div class="timeline" id="history-list"></div>
+  </div>
+
+  <!-- MESSAGES -->
+  <div class="content" id="tab-messages" style="display:none;">
+    <div class="section-title">Texts</div>
+    <div id="messages-list"></div>
+  </div>
+
+  <!-- CALLS -->
+  <div class="content" id="tab-calls" style="display:none;">
+    <div class="section-title">Call history</div>
+    <div id="calls-list"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="content" id="tab-settings" style="display:none;">
+    <div class="section-title">Appearance</div>
+
+    <div class="settings-row" id="dark-mode-row">
+      <div>
+        <div class="settings-label">Dark mode</div>
+        <div class="settings-desc">Switch the app's color scheme</div>
+      </div>
+      <label class="switch-wrap">
+        <input type="checkbox" class="switch-input" id="dark-mode-switch">
+        <span class="switch-track"></span>
+        <span class="switch-thumb"></span>
+      </label>
+    </div>
+
+    <div class="section-title" style="margin-top:22px;">Number swapping</div>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-label">Daily swap limit</div>
+        <div class="settings-desc">Fixed at 5 new numbers per day</div>
+      </div>
+      <span class="stepper-value" style="font-size:16px;">5</span>
+    </div>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-label">Vibrate on swap</div>
+        <div class="settings-desc">Haptic feedback when your number changes</div>
+      </div>
+      <label class="switch-wrap">
+        <input type="checkbox" class="switch-input" id="vibrate-switch">
+        <span class="switch-track"></span>
+        <span class="switch-thumb"></span>
+      </label>
+    </div>
+
+    <div class="settings-row">
+      <div>
+        <div class="settings-label">Message sound</div>
+        <div class="settings-desc">Play a tone on new texts</div>
+      </div>
+      <label class="switch-wrap">
+        <input type="checkbox" class="switch-input" id="sound-switch">
+        <span class="switch-track"></span>
+        <span class="switch-thumb"></span>
+      </label>
+    </div>
+
+    <div class="section-title" style="margin-top:22px;">Data</div>
+    <button class="btn btn-danger" id="reset-btn">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+      Reset app data
+    </button>
+  </div>
+
+  <!-- Area code / city picker overlay -->
+  <div class="overlay" id="picker">
+    <div class="overlay-top">
+      <button class="icon-btn" id="back-btn" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </button>
+      <input class="search-input" id="search-input" type="text" placeholder="City or area code" autocomplete="off">
+    </div>
+    <div class="results" id="results-list"></div>
+  </div>
+
+  <!-- Message thread overlay -->
+  <div class="overlay" id="thread">
+    <div class="overlay-top">
+      <button class="icon-btn" id="thread-back-btn" aria-label="Back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+      </button>
+      <div>
+        <div class="overlay-title" id="thread-name">Contact</div>
+        <div class="overlay-sub" id="thread-number">(555) 555-0100</div>
+      </div>
+    </div>
+    <div class="thread-body" id="thread-body"></div>
+    <div class="thread-input-bar">
+      <input class="text-input" id="thread-input" type="text" placeholder="Text message" autocomplete="off">
+      <button class="send-btn" id="thread-send-btn" aria-label="Send">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tabbar">
+    <button class="tab active" data-tab="home">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+      <span class="tab-label">Home</span>
+    </button>
+    <button class="tab" data-tab="messages">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.4 8.4 8.3 8.3 0 0 1-3.8-.9L3 21l1.9-5.8a8.3 8.3 0 0 1-.9-3.7A8.4 8.4 0 1 1 21 11.5z"/></svg>
+      <span class="tab-label">Texts</span>
+    </button>
+    <button class="tab" data-tab="calls">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      <span class="tab-label">Calls</span>
+    </button>
+    <button class="tab" data-tab="settings">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      <span class="tab-label">Settings</span>
+    </button>
+  </div>
+
+</div>
+
+<script>
+const STORAGE_KEY = 'relay-app-state';
+
+const regions = [
+  {ac:'205', city:'Birmingham', state:'AL'},
+  {ac:'907', city:'Anchorage', state:'AK'},
+  {ac:'602', city:'Phoenix', state:'AZ'},
+  {ac:'520', city:'Tucson', state:'AZ'},
+  {ac:'501', city:'Little Rock', state:'AR'},
+  {ac:'213', city:'Los Angeles', state:'CA'},
+  {ac:'415', city:'San Francisco', state:'CA'},
+  {ac:'619', city:'San Diego', state:'CA'},
+  {ac:'916', city:'Sacramento', state:'CA'},
+  {ac:'408', city:'San Jose', state:'CA'},
+  {ac:'303', city:'Denver', state:'CO'},
+  {ac:'719', city:'Colorado Springs', state:'CO'},
+  {ac:'860', city:'Hartford', state:'CT'},
+  {ac:'203', city:'Bridgeport', state:'CT'},
+  {ac:'302', city:'Wilmington', state:'DE'},
+  {ac:'202', city:'Washington', state:'DC'},
+  {ac:'305', city:'Miami', state:'FL'},
+  {ac:'407', city:'Orlando', state:'FL'},
+  {ac:'813', city:'Tampa', state:'FL'},
+  {ac:'904', city:'Jacksonville', state:'FL'},
+  {ac:'404', city:'Atlanta', state:'GA'},
+  {ac:'912', city:'Savannah', state:'GA'},
+  {ac:'808', city:'Honolulu', state:'HI'},
+  {ac:'208', city:'Boise', state:'ID'},
+  {ac:'312', city:'Chicago', state:'IL'},
+  {ac:'773', city:'Chicago', state:'IL'},
+  {ac:'217', city:'Springfield', state:'IL'},
+  {ac:'317', city:'Indianapolis', state:'IN'},
+  {ac:'260', city:'Fort Wayne', state:'IN'},
+  {ac:'515', city:'Des Moines', state:'IA'},
+  {ac:'316', city:'Wichita', state:'KS'},
+  {ac:'785', city:'Topeka', state:'KS'},
+  {ac:'502', city:'Louisville', state:'KY'},
+  {ac:'859', city:'Lexington', state:'KY'},
+  {ac:'504', city:'New Orleans', state:'LA'},
+  {ac:'225', city:'Baton Rouge', state:'LA'},
+  {ac:'207', city:'Portland', state:'ME'},
+  {ac:'410', city:'Baltimore', state:'MD'},
+  {ac:'617', city:'Boston', state:'MA'},
+  {ac:'413', city:'Springfield', state:'MA'},
+  {ac:'313', city:'Detroit', state:'MI'},
+  {ac:'616', city:'Grand Rapids', state:'MI'},
+  {ac:'612', city:'Minneapolis', state:'MN'},
+  {ac:'651', city:'St. Paul', state:'MN'},
+  {ac:'218', city:'Duluth', state:'MN'},
+  {ac:'601', city:'Jackson', state:'MS'},
+  {ac:'314', city:'St. Louis', state:'MO'},
+  {ac:'816', city:'Kansas City', state:'MO'},
+  {ac:'406', city:'Billings', state:'MT'},
+  {ac:'402', city:'Omaha', state:'NE'},
+  {ac:'702', city:'Las Vegas', state:'NV'},
+  {ac:'775', city:'Reno', state:'NV'},
+  {ac:'603', city:'Manchester', state:'NH'},
+  {ac:'973', city:'Newark', state:'NJ'},
+  {ac:'609', city:'Trenton', state:'NJ'},
+  {ac:'505', city:'Albuquerque', state:'NM'},
+  {ac:'212', city:'New York', state:'NY'},
+  {ac:'718', city:'Brooklyn', state:'NY'},
+  {ac:'716', city:'Buffalo', state:'NY'},
+  {ac:'585', city:'Rochester', state:'NY'},
+  {ac:'704', city:'Charlotte', state:'NC'},
+  {ac:'919', city:'Raleigh', state:'NC'},
+  {ac:'701', city:'Fargo', state:'ND'},
+  {ac:'614', city:'Columbus', state:'OH'},
+  {ac:'216', city:'Cleveland', state:'OH'},
+  {ac:'513', city:'Cincinnati', state:'OH'},
+  {ac:'405', city:'Oklahoma City', state:'OK'},
+  {ac:'918', city:'Tulsa', state:'OK'},
+  {ac:'503', city:'Portland', state:'OR'},
+  {ac:'541', city:'Eugene', state:'OR'},
+  {ac:'215', city:'Philadelphia', state:'PA'},
+  {ac:'412', city:'Pittsburgh', state:'PA'},
+  {ac:'401', city:'Providence', state:'RI'},
+  {ac:'843', city:'Charleston', state:'SC'},
+  {ac:'803', city:'Columbia', state:'SC'},
+  {ac:'605', city:'Sioux Falls', state:'SD'},
+  {ac:'615', city:'Nashville', state:'TN'},
+  {ac:'901', city:'Memphis', state:'TN'},
+  {ac:'713', city:'Houston', state:'TX'},
+  {ac:'214', city:'Dallas', state:'TX'},
+  {ac:'512', city:'Austin', state:'TX'},
+  {ac:'210', city:'San Antonio', state:'TX'},
+  {ac:'915', city:'El Paso', state:'TX'},
+  {ac:'801', city:'Salt Lake City', state:'UT'},
+  {ac:'802', city:'Burlington', state:'VT'},
+  {ac:'804', city:'Richmond', state:'VA'},
+  {ac:'703', city:'Arlington', state:'VA'},
+  {ac:'206', city:'Seattle', state:'WA'},
+  {ac:'509', city:'Spokane', state:'WA'},
+  {ac:'304', city:'Charleston', state:'WV'},
+  {ac:'414', city:'Milwaukee', state:'WI'},
+  {ac:'608', city:'Madison', state:'WI'},
+  {ac:'715', city:'Eau Claire', state:'WI'},
+  {ac:'920', city:'Green Bay', state:'WI'},
+  {ac:'262', city:'Waukesha', state:'WI'},
+  {ac:'307', city:'Cheyenne', state:'WY'}
+];
+
+function todayKey() {
+  const d = new Date();
+  return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+}
+
+const DAILY_SWAP_LIMIT = 5;
+
+function initials(name) {
+  return name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+}
+
+function defaultState() {
+  return {
+    history: [
+      { number: '(612) 555-0148', city: 'Minneapolis, MN', status: 'active', time: 'Active now' },
+      { number: '(715) 555-0392', city: 'Eau Claire, WI', status: 'retired', time: '2h ago' },
+      { number: '(414) 555-0071', city: 'Milwaukee, WI', status: 'retired', time: 'Yesterday' }
+    ],
+    currentAc: '612',
+    swapsRemaining: DAILY_SWAP_LIMIT,
+    resetKey: todayKey(),
+    darkMode: false,
+    vibrate: true,
+    sound: true,
+    conversations: [
+      { id: 'c1', name: 'Jordan', number: '(612) 555-3391', unread: true,
+        messages: [
+          { from: 'them', text: 'Hey, are we still on for Thursday?' },
+          { from: 'them', text: 'Lmk when you get a sec' }
+        ] },
+      { id: 'c2', name: 'Sam', number: '(715) 555-2207', unread: false,
+        messages: [
+          { from: 'me', text: 'Sent over the file' },
+          { from: 'them', text: 'Got it, thanks!' }
+        ] },
+      { id: 'c3', name: 'Unknown', number: '(888) 555-0192', unread: false,
+        messages: [
+          { from: 'them', text: 'Your verification code is 481920' }
+        ] }
+    ],
+    calls: [
+      { name: 'Jordan', number: '(612) 555-3391', direction: 'incoming', time: 'Today, 2:14 PM', duration: '4m 12s' },
+      { name: 'Sam', number: '(715) 555-2207', direction: 'outgoing', time: 'Today, 11:02 AM', duration: '1m 03s' },
+      { name: 'Unknown', number: '(800) 555-0143', direction: 'missed', time: 'Yesterday, 6:47 PM', duration: null },
+      { name: 'Jordan', number: '(612) 555-3391', direction: 'outgoing', time: 'Yesterday, 9:20 AM', duration: '12m 40s' }
+    ]
+  };
+}
+
+function loadState() {
+  let s;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    s = raw ? JSON.parse(raw) : defaultState();
+  } catch (e) {
+    s = defaultState();
+  }
+  if (s.resetKey !== todayKey()) {
+    s.swapsRemaining = DAILY_SWAP_LIMIT;
+    s.resetKey = todayKey();
+  }
+  s.maxSwaps = DAILY_SWAP_LIMIT;
+  s.swapsRemaining = Math.min(s.swapsRemaining, DAILY_SWAP_LIMIT);
+  return s;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+let state = loadState();
+let activeConversationId = null;
+
+function genNumber(ac) {
+  const num = String(Math.floor(Math.random()*9000)+1000);
+  return `(${ac}) 555-${num}`;
+}
+
+function applyTheme() {
+  document.documentElement.dataset.theme = state.darkMode ? 'dark' : 'light';
+}
+
+function haptic() {
+  if (state.vibrate && navigator.vibrate) {
+    try { navigator.vibrate(15); } catch (e) {}
+  }
+}
+
+/* ---------- Tabs ---------- */
+function showTab(name) {
+  ['home', 'messages', 'calls', 'settings'].forEach(t => {
+    document.getElementById('tab-' + t).style.display = (t === name) ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === name);
+  });
+  document.getElementById('topbar-right').textContent =
+    name === 'home'
+      ? state.swapsRemaining + (state.swapsRemaining === 1 ? ' swap left today' : ' swaps left today')
+      : name.charAt(0).toUpperCase() + name.slice(1);
+}
+
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => showTab(btn.dataset.tab));
+});
+
+/* ---------- Home / number swap ---------- */
+function renderHome() {
+  document.getElementById('current-number').textContent = state.history[0].number;
+  document.getElementById('current-city').textContent = state.history[0].city;
+
+  const activeTabBtn = document.querySelector('.tab.active');
+  if (activeTabBtn && activeTabBtn.dataset.tab === 'home') {
+    document.getElementById('topbar-right').textContent =
+      state.swapsRemaining + (state.swapsRemaining === 1 ? ' swap left today' : ' swaps left today');
+  }
+
+  const limitReached = state.swapsRemaining <= 0;
+  document.getElementById('swap-btn').disabled = limitReached;
+  document.getElementById('open-picker-btn').disabled = limitReached;
+  document.getElementById('limit-note').style.display = limitReached ? 'block' : 'none';
+
+  const list = document.getElementById('history-list');
+  list.innerHTML = '';
+  state.history.forEach(h => {
+    const row = document.createElement('div');
+    row.className = 't-row' + (h.status === 'active' ? ' active' : '');
+    row.innerHTML = `
+      <div class="t-dot"></div>
+      <div class="t-number">${h.number}</div>
+      <div class="t-meta">${h.city}</div>
+      <div class="t-time">${h.time}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+function doSwap(ac, cityLabel) {
+  if (state.swapsRemaining <= 0) { renderHome(); return; }
+  const newNum = genNumber(ac);
+  state.history.forEach(h => { if (h.status === 'active') { h.status = 'retired'; h.time = 'Just now'; } });
+  state.history.unshift({ number: newNum, city: cityLabel, status: 'active', time: 'Active now' });
+  if (state.history.length > 6) state.history.pop();
+  state.swapsRemaining -= 1;
+  state.currentAc = ac;
+  haptic();
+  saveState();
+  renderHome();
+}
+
+document.getElementById('swap-btn').addEventListener('click', () => {
+  if (state.swapsRemaining <= 0) return;
+  const r = regions.find(r => r.ac === state.currentAc);
+  doSwap(state.currentAc, r ? `${r.city}, ${r.state}` : '');
+});
+
+/* ---------- Area code / city picker ---------- */
+function renderResults(query) {
+  const q = query.trim().toLowerCase();
+  const filtered = regions.filter(r =>
+    r.ac.includes(q) || r.city.toLowerCase().includes(q) || r.state.toLowerCase().includes(q)
+  );
+  const list = document.getElementById('results-list');
+  list.innerHTML = '';
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty">No matches. Try a different city or code.</div>';
+    return;
+  }
+  filtered.forEach(r => {
+    const row = document.createElement('button');
+    row.className = 'result-row';
+    row.innerHTML = `
+      <div>
+        <div class="result-city">${r.city}</div>
+        <div class="result-state">${r.state}</div>
+      </div>
+      <div class="result-ac">${r.ac}</div>
+    `;
+    row.addEventListener('click', () => {
+      doSwap(r.ac, `${r.city}, ${r.state}`);
+      closeOverlay('picker');
+    });
+    list.appendChild(row);
+  });
+}
+
+function openOverlay(id) {
+  document.getElementById(id).classList.add('open');
+}
+function closeOverlay(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+document.getElementById('open-picker-btn').addEventListener('click', () => {
+  if (state.swapsRemaining <= 0) return;
+  document.getElementById('search-input').value = '';
+  renderResults('');
+  openOverlay('picker');
+  setTimeout(() => document.getElementById('search-input').focus(), 200);
+});
+document.getElementById('back-btn').addEventListener('click', () => closeOverlay('picker'));
+document.getElementById('search-input').addEventListener('input', (e) => renderResults(e.target.value));
+
+/* ---------- Messages ---------- */
+function renderMessagesList() {
+  const list = document.getElementById('messages-list');
+  list.innerHTML = '';
+  state.conversations.forEach(c => {
+    const last = c.messages[c.messages.length - 1];
+    const row = document.createElement('button');
+    row.className = 'row';
+    row.innerHTML = `
+      <div class="avatar">${initials(c.name)}</div>
+      <div class="row-main">
+        <div class="row-name">${c.name}</div>
+        <div class="row-sub">${last ? (last.from === 'me' ? 'You: ' : '') + last.text : ''}</div>
+      </div>
+      <div class="row-meta">${c.unread ? '<span class="unread-dot"></span>' : ''}</div>
+    `;
+    row.addEventListener('click', () => openThread(c.id));
+    list.appendChild(row);
+  });
+}
+
+function renderThread() {
+  const c = state.conversations.find(c => c.id === activeConversationId);
+  if (!c) return;
+  document.getElementById('thread-name').textContent = c.name;
+  document.getElementById('thread-number').textContent = c.number;
+  const body = document.getElementById('thread-body');
+  body.innerHTML = '';
+  c.messages.forEach(m => {
+    const row = document.createElement('div');
+    row.className = 'bubble-row ' + (m.from === 'me' ? 'mine' : 'theirs');
+    row.innerHTML = `<div class="bubble"></div>`;
+    row.querySelector('.bubble').textContent = m.text;
+    body.appendChild(row);
+  });
+  body.scrollTop = body.scrollHeight;
+}
+
+function openThread(id) {
+  activeConversationId = id;
+  const c = state.conversations.find(c => c.id === id);
+  if (c) c.unread = false;
+  renderThread();
+  renderMessagesList();
+  document.getElementById('thread-input').value = '';
+  openOverlay('thread');
+  setTimeout(() => document.getElementById('thread-input').focus(), 200);
+}
+
+function sendMessage() {
+  const input = document.getElementById('thread-input');
+  const text = input.value.trim();
+  if (!text || !activeConversationId) return;
+  const c = state.conversations.find(c => c.id === activeConversationId);
+  c.messages.push({ from: 'me', text });
+  input.value = '';
+  saveState();
+  renderThread();
+  renderMessagesList();
+}
+
+document.getElementById('thread-send-btn').addEventListener('click', sendMessage);
+document.getElementById('thread-input').addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') sendMessage();
+});
+document.getElementById('thread-back-btn').addEventListener('click', () => closeOverlay('thread'));
+
+/* ---------- Calls ---------- */
+const callIcons = {
+  outgoing: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M8 7h9v9"/></svg>',
+  incoming: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M7 8v9h9"/></svg>',
+  missed: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 7 7 17"/><path d="M7 8v9h9"/></svg>'
+};
+
+function renderCalls() {
+  const list = document.getElementById('calls-list');
+  list.innerHTML = '';
+  state.calls.forEach(call => {
+    const row = document.createElement('div');
+    row.className = 'row';
+    const iconClass = call.direction;
+    row.innerHTML = `
+      <div class="call-icon ${iconClass}">${callIcons[call.direction]}</div>
+      <div class="row-main">
+        <div class="row-name ${call.direction === 'missed' ? 'missed' : ''}">${call.name}</div>
+        <div class="row-sub">${call.number}</div>
+      </div>
+      <div class="row-meta">${call.time}${call.duration ? '<br>' + call.duration : ''}</div>
+    `;
+    list.appendChild(row);
+  });
+}
+
+/* ---------- Settings ---------- */
+function renderSettings() {
+  document.getElementById('dark-mode-switch').checked = state.darkMode;
+  document.getElementById('vibrate-switch').checked = state.vibrate;
+  document.getElementById('sound-switch').checked = state.sound;
+}
+
+document.getElementById('dark-mode-switch').addEventListener('change', (e) => {
+  state.darkMode = e.target.checked;
+  applyTheme();
+  saveState();
+});
+
+document.getElementById('vibrate-switch').addEventListener('change', (e) => {
+  state.vibrate = e.target.checked;
+  saveState();
+});
+
+document.getElementById('sound-switch').addEventListener('change', (e) => {
+  state.sound = e.target.checked;
+  saveState();
+});
+
+document.getElementById('reset-btn').addEventListener('click', () => {
+  try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+  state = defaultState();
+  activeConversationId = null;
+  applyTheme();
+  renderAll();
+});
+
+/* ---------- Init ---------- */
+function renderAll() {
+  renderHome();
+  renderMessagesList();
+  renderCalls();
+  renderSettings();
+}
+
+applyTheme();
+renderAll();
+</script>
+
+</body>
+</html>
